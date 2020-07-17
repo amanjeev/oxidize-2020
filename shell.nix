@@ -13,6 +13,8 @@ in
       orig.libusb1
       orig.pkg-config
       new.nrfutil
+      orig.file
+      orig.toybox
     ];
     shellHook = ''
               export PATH=~/.cargo/bin:$PATH
