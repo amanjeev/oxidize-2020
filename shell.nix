@@ -1,18 +1,20 @@
-{ pkgs ? import <nixpkgs> {} }:
-with pkgs;
-mkShell {
-  buildInputs = [
-    git
-    python38Full
-    python38Packages.setuptools
-    zlib
-    libusb1
-    pkg-config
-  ];
-  shellHook = ''
-            export PATH=~/.cargo/bin:$PATH
-            alias pip="PIP_PREFIX='$(pwd)/_build/pip_packages' \pip"
-            export PYTHONPATH="$(pwd)/_build/pip_packages/lib/python3.8/site-packages:$PYTHONPATH"
-            unset SOURCE_DATE_EPOCH
-  '';
-}
+let
+  orig = import <nixpkgs> {};
+  src = orig.fetchFromGitHub {
+    owner = "nixos";
+    repo = "nixpkgs";
+    rev = "7d0f8355b3e8827e18bed6d608bfb3f1c12b8dc7";
+    sha256 = "0asy3cyjm22r4k2n57ky92jvm37mqr3ykd2ik2gnak32488csj88";
+  };
+  new = import src {};
+in
+  orig.mkShell {
+    buildInputs = [
+      orig.libusb1
+      orig.pkg-config
+      new.nrfutil
+    ];
+    shellHook = ''
+              export PATH=~/.cargo/bin:$PATH
+    '';
+  }
